@@ -1,9 +1,8 @@
-// script.js
 import { getTasks, createTask, updateTask, deleteTask } from "./api.js";
 
 const columns = ["todoList", "doingList", "doneList"];
 
-// Carregar tarefas do backend
+// Carregar tarefas do LocalStorage
 window.addEventListener("DOMContentLoaded", async () => {
   const tasks = await getTasks();
   tasks.forEach(task => renderTask(task));
@@ -90,6 +89,7 @@ columns.forEach(id => {
     dragging.dataset.column = newColumn;
     ul.appendChild(dragging);
     setCardColor(dragging, newColumn);
+    updateTask(parseInt(dragging.dataset.id), { column: newColumn });
   });
 });
 

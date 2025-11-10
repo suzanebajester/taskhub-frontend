@@ -1,32 +1,39 @@
-// api.js
-const BASE_URL = "http://localhost:3000";
+// api.js - versão LocalStorage
 
+// Chave para armazenar tarefas no navegador
+const STORAGE_KEY = "tasks";
+
+// Pegar todas as tarefas
 export async function getTasks() {
-  const res = await fetch(`${BASE_URL}/tasks`);
-  return res.json();
+  const tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  return tasks;
 }
 
+// Criar uma nova tarefa
 export async function createTask(task) {
-  const res = await fetch(`${BASE_URL}/tasks`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(task),
-  });
-  return res.json();
+  const tasks = await getTasks();
+  const newTask = { id: Date.now(), ...task }; // adiciona um id único
+  tasks.push(newTask);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+  return newTask;
 }
 
+// Atualizar uma tarefa existente
 export async function updateTask(id, data) {
-  const res = await fetch(`${BASE_URL}/tasks/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-  return res.json();
+  const tasks = await getTasks();
+  const index = tasks.findIndex((t) => t.id === id);
+  if (index !== -1) {
+    tasks[index] = { ...tasks[index], ...data };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+    return tasks[index];
+  }
+  return null;
 }
 
+// Deletar uma tarefa
 export async function deleteTask(id) {
-  const res = await fetch(`${BASE_URL}/tasks/${id}`, {
-    method: "DELETE",
-  });
-  return res.json();
+  let tasks = await getTasks();
+  tasks = tasks.filter((t) => t.id !== id);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+  return true;
 }
