@@ -81,7 +81,7 @@ columns.forEach(id => {
     else ul.insertBefore(dragging, afterElement);
   });
 
-  ul.addEventListener("drop", e => {
+  ul.addEventListener("drop", async e => {
     e.preventDefault();
     const dragging = document.querySelector(".dragging");
     if (!dragging) return;
@@ -89,7 +89,7 @@ columns.forEach(id => {
     dragging.dataset.column = newColumn;
     ul.appendChild(dragging);
     setCardColor(dragging, newColumn);
-    updateTask(parseInt(dragging.dataset.id), { column: newColumn });
+    await updateTask(parseInt(dragging.dataset.id), { column: newColumn });
   });
 });
 
